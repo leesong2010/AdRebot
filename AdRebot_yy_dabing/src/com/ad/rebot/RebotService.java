@@ -119,9 +119,9 @@ public class RebotService extends Service{
 	{
 		try {
 			DeviceConfig config = new DeviceConfig();
-			config.setEndpoint("http://42.51.3.219:8089/adrobot-web");
+			config.setEndpoint("http://42.51.3.219:8089/yy");
 			config.setAdSense("haomatong");
-			config.setAppName("360");
+			config.setAppName("yy");
 			config.setDevicesIndex(4);
 			haomatongDeviceCreator.init(config);
 		} catch (Exception e) {
@@ -209,7 +209,7 @@ public class RebotService extends Service{
 	private void startMonkey(){
 		try {
 			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
-			cmd.su.runWaitFor("monkey -p " + currAdPkg + " --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_360.txt 1");
+			cmd.su.runWaitFor("monkey -p " + currAdPkg + " --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_yy.txt 1");
 		} catch (Exception e) {
 			Loger.w(AdUtils.getErrorInfoFromException(e));
 		}
@@ -221,7 +221,7 @@ public class RebotService extends Service{
 		PackageManager pm = getPackageManager(); 
 		Intent intent = new Intent();
 		intent =pm.getLaunchIntentForPackage(currAdPkg); 		
-		//startActivity(intent);
+		startActivity(intent);
 		startMonkey();
 		appOpened = true;		
 				
