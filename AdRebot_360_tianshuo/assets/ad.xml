@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <items>
+		<item>
+			<adName>美女打飞机</adName>
+			<adPkg>com.ta.ttkf</adPkg>
+			<delay>8</delay>
+		</item>
+		<item>
+			<adName>人人网</adName>
+			<adPkg>com.renren.mobile.android</adPkg>
+			<delay>4</delay>
+		</item>
+		<item>
+			<adName>动感影吧</adName>
+			<adPkg>com.sy.mmvideo</adPkg>
+			<delay>6</delay>
+		</item>
+		<item>
+			<adName>动感影吧</adName>
+			<adPkg>com.sy.mmvideo</adPkg>
+			<delay>6</delay>
+		</item>
+		
+    </items>

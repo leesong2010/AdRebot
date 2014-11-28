@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/MyCode/!svn/ver/330/AdRebot_HMT/src/android/content/pm
+END
+IPackageDataObserver.aidl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/MyCode/!svn/ver/330/AdRebot_HMT/src/android/content/pm/IPackageDataObserver.aidl
+END
+PackageStats.aidl
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/MyCode/!svn/ver/330/AdRebot_HMT/src/android/content/pm/PackageStats.aidl
+END
+IPackageStatsObserver.aidl
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/MyCode/!svn/ver/330/AdRebot_HMT/src/android/content/pm/IPackageStatsObserver.aidl
+END

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+<item>
+	<adName>360mobile</adName>
+	<adPkg>com.qihoo360.mobilesafe</adPkg>
+	<delay>60</delay>
+</item>
+</items>

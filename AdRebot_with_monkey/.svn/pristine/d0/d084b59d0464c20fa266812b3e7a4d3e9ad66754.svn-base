@@ -1,0 +1,718 @@
+package com.ad.dyd;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.herojohn.adrobot.device.DeviceFactory;
+import org.herojohn.adrobot.device.creator.impl.HaomatongDeviceWebCreator;
+import org.herojohn.adrobot.device.model.Device;
+import org.herojohn.adrobot.device.model.DeviceConfig;
+import org.herojohn.adrobot.device.model.HaomatongDevice;
+import org.herojohn.adrobot.device.model.QumiDevice;
+import org.herojohn.adrobot.device.util.MD5;
+
+
+
+
+
+
+
+
+
+
+import com.ad.dyd.utils.AdUtils;
+import com.ad.dyd.utils.CheckIP;
+import com.ad.dyd.utils.Contants;
+import com.ad.dyd.utils.Loger;
+import com.ad.dyd.utils.MyLoger;
+import com.ad.dyd.utils.ShellCommand;
+import com.ad.vo.ActiveLog;
+import com.ad.vo.AdItem;
+import com.ad.vo.IP;
+import com.ad.vo.Mobile;
+
+import android.app.ActivityManager;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.IPackageDataObserver;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.util.Log;
+
+
+public class RebotService extends Service{
+
+	
+	private String currAdPkg = "com.sg.sledog";
+	//private String currAdPkg = "com.example.imei";
+	private AdItem currAd;
+	
+	
+	private static final String TAG = "adrebot";
+	private boolean appOpened = false;
+	private static ServiceBrodcast brodcast;
+	private static ActiveLog log;
+	
+	//参数设置工具类
+	private com.ad.dyd.utils.SetParams setParams;	
+	//代理工具类
+	private com.ad.dyd.utils.Proxy proxy;
+	
+	//private HaomatongDevice device = null;
+	//所有配置参数
+	private String IMEI;					//IMEI                 	   1
+	private String IMSI;					//IMSI                     2
+	private String Mac;						//Macaddr 				   3
+	private String UDID;					//UDID					   4
+	private String line1Number;				//电话号码  					   5
+	private String screenWidth;				//屏幕宽                                                                           6
+	private String screenHeight;			//屏幕高                                                                           7
+	private String networkType;				//网络类型 				       8
+	private String networkOperation;        //网络运营商                                                                 9
+	private String phoneModel;				//手机型号                                                                     10
+	private String phoneManufacturer;		//手机厂商                                                                     11
+	private String androidReleaseVersion;	//Android版本号                                                 12
+	private String screenLayoutSize;		//screenLayoutSize         13	
+	private String androidSDKLevel;           //Android api Level        13
+	
+	private int killCount;
+	private String currIP = "";
+	private String currPort = "";
+	private static boolean STOP_GET_IP = false;
+	private static boolean RUNNING = false;
+	private List<AdItem> adList;
+	private static int succ = 0;//新增成功数
+	private static int oldSucc = 0;//活跃用户成功数
+	private static boolean isNewUser = false;//如果true，代表是新用户激活
+	private DYDApp app;
+	private ActivityManager am;
+	private boolean getOldDevice = false;
+	private MyLoger oldLog = new MyLoger("old");
+	private boolean toGetOlderDevice = false;
+	
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+	
+	public void onCreate() {
+		
+		DYDApp.Log("RebotService onCreate()");
+		app = (DYDApp)getApplicationContext();
+		brodcast = new ServiceBrodcast();
+		IntentFilter intentFilter=new IntentFilter();
+		intentFilter.addAction("stop_ad_service");
+		intentFilter.addAction("get_old_device_on");
+		intentFilter.addAction("get_old_device_off");
+		registerReceiver(brodcast, intentFilter);
+		
+		
+		File f = new File(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
+		am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);  
+		
+		if(!f.exists()) 
+		{
+			DYDApp.Log("SDCard ip.txt can not found!!!");
+			stopSelf();
+		}
+		else
+		{
+			DYDApp.ipListAddress = AdUtils.readProperties(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
+		}
+		 
+	}
+
+	
+	//初始化相关工具
+	private void init(){
+		setParams = new com.ad.dyd.utils.SetParams(getApplicationContext());
+		proxy = new com.ad.dyd.utils.Proxy(getApplicationContext());
+	}
+		
+	public void onStart(Intent intent, int startId) {
+		DYDApp.Log("RebotService onStart()");
+		init();
+		
+		STOP_GET_IP = false;
+		
+		if(!RUNNING)
+			handler.post(runnable);
+		
+		
+	}
+	
+	Handler handler = new Handler() {  
+	    public void handleMessage(Message msg) {  
+	    	
+	        super.handleMessage(msg);  
+	    }  
+	};  
+	
+	public void onDestroy() {
+		super.onDestroy();
+		
+		proxy.stopProxy();
+		handler.removeCallbacks(runnable);
+		handler.removeCallbacks(getIpRunner);
+		STOP_GET_IP = true;
+		unregisterReceiver(brodcast);
+		app.setText("RebotService onDestroy");
+		DYDApp.Log("RebotService onDestroy");
+	}
+	
+	private class ServiceBrodcast extends BroadcastReceiver
+	{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String act = intent.getAction();
+			System.out.println("act="+act);
+			if("stop_ad_service".equals(act)){
+				File f = new File(Environment.getExternalStorageDirectory().getPath() + "/paramConfig");
+				if(f.exists())f.delete();
+				STOP_GET_IP = true;
+				stopSelf();
+			}
+			
+			if("get_old_device_on".equals(act)){
+				toGetOlderDevice = true;
+			}
+			if("get_old_device_off".equals(act)){
+				toGetOlderDevice = false;
+			}
+		}
+		
+	}
+	
+	//结束app
+	private void killApp()
+	{
+		proxy.stopProxy();
+		
+		try {
+			/*QuMiApp.Log("kill " + currAdPkg);
+			ShellCommand cmd = new ShellCommand();
+			//cmd.su.runWaitFor("kill -9 " + ShellCommand.getProcessPid(getApplicationContext(), currAdPkg));
+			cmd.su.runWaitFor("busybox killall -9 " + currAdPkg);*/
+			
+			Method forceStopPackage = am.getClass().getDeclaredMethod("forceStopPackage", String.class);
+			forceStopPackage.setAccessible(true);
+			forceStopPackage.invoke(am, currAdPkg);
+			//am.forceStopPackage(currAdPkg);  
+			appOpened = false;
+			
+		} catch (Exception e) {
+			Loger.w(AdUtils.getErrorInfoFromException(e));
+		}
+	}
+	
+	private void startMonkey()
+	{
+		try {
+			ShellCommand cmd = new ShellCommand();
+			//cmd.su.runWaitFor("monkey -p " + currAdPkg +" --kill-process-after-error  --pct-syskeys 0 --pct-anyevent 0 --pct-trackball 0 --throttle 100 -v " + QuMiApp.MONEKY_TIMES);
+			cmd.su.runWaitFor("monkey -p " + currAdPkg +" --kill-process-after-error   --pct-touch 100 --throttle 20 -v " + DYDApp.MONEKY_TIMES);
+			//monkey -p com.ta.ttkf --pct-touch 100 --throttle 500 -v 10
+		} catch (Exception e) {
+			Loger.w(AdUtils.getErrorInfoFromException(e));
+		}
+	}
+	
+	private void startApp()
+	{
+		try {
+			
+			killApp();
+			
+			if(log.isOld())
+				app.setText(getString(R.string.start_pkg) + currAdPkg + getString(R.string.start_pkg1) + "-#活跃#");
+			else{
+				clearData(currAdPkg);
+				app.setText(getString(R.string.start_pkg) + currAdPkg + getString(R.string.start_pkg1));
+			}
+			PackageManager pm = getPackageManager(); 
+			Intent intent = new Intent();
+			intent =pm.getLaunchIntentForPackage(currAdPkg); 		
+			startActivity(intent);
+			//startMonkey();//用monkey启动app
+			
+			appOpened = true;
+			if(log.isOld())
+				oldLog.w(log.getImei() + "-" + currAdPkg + "--" + AdUtils.formatDate(log.getActiveTime() ));
+			else
+				Loger.w("启动 " + log.getImei() + "-" + currAdPkg + "--" + AdUtils.formatDate(log.getActiveTime() ));
+		} catch (Exception e) {
+			if(e.getMessage() != null){
+				Loger.w(AdUtils.getErrorInfoFromException(e));
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	
+	private void setNetwork(){
+		int radomDevice = new Random().nextInt(100);
+		//50% wifi
+		if(radomDevice >=0 && radomDevice <50){
+			networkType = "wifi";
+			networkOperation = "";				
+		}
+		//50% Mobile
+		else{
+			// 中国联通
+			if(IMSI.startsWith("46001") || IMSI.startsWith("46006")){
+				networkType = Mobile.ChinaUnicom.getRandomType();					
+				networkOperation = Mobile.CHINA_UNICOM;					
+			}
+			//中国移动
+			if(IMSI.startsWith("46000") || IMSI.startsWith("46002") || IMSI.startsWith("46007")){
+				networkType = Mobile.ChinaMobile.getRandomType();					
+				networkOperation = Mobile.CHINA_MOBILE;					
+			}	
+			//中国电信
+			if(IMSI.startsWith("46003") || IMSI.startsWith("46005")){
+				networkType = Mobile.ChinaTelCom.getRandomType();					
+				networkOperation = Mobile.CHINA_TELCOM;					
+			}
+		}	
+	}
+	
+
+	
+	Runnable runnable=new Runnable(){
+		public void run() 
+		{
+			DYDApp.Log(getString(R.string.doit));
+			app.setText(getString(R.string.doit));
+			if(DYDApp.appList.size() > 0 && appOpened == false)
+			{
+				log = DYDApp.appList.get(0);
+				DYDApp.appList.remove(log);//删除刚才取过的
+				String pkg = log.getPkg();
+				DYDApp.Log(getString(R.string.pkg_name)+pkg);
+				app.setText(getString(R.string.pkg_name)+pkg);
+				
+				boolean isInstalled = AdUtils.isAppInstalled(getApplicationContext(), pkg);
+				if(!isInstalled){
+					DYDApp.Log(pkg +getString(R.string.pkg_no_install));
+					app.setText(pkg +getString(R.string.pkg_no_install));
+					Loger.w("本地没安装:"+"--"+ log.getImei() +"--" + log.getPkg() +"--" + AdUtils.formatDate(log.getActiveTime() ));
+					handler.postDelayed(runnable, 1000);
+					return;
+				}
+				
+				currAdPkg = log.getPkg();
+				
+				
+				
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							String ip = log.getIp();
+							String port = log.getPort() + "";
+							
+							//下面开始验证ip
+							String localIP = CheckIP.getLocalIP();
+					        DYDApp.Log(getString(R.string.local_ip)+localIP);
+					        app.setText(getString(R.string.local_ip)+localIP);
+					        
+					        
+					        proxy.startProxy(ip, port);
+					        boolean result = CheckIP.isAvailProxy(localIP,ip,port);
+					        if(result)//如果代理可用，直接启动广告主app
+					        {
+					        	app.setText(ip+":"+port+getString(R.string.ip_can_use));
+					        	DYDApp.Log(ip+":"+port+getString(R.string.ip_can_use));
+					        	
+					        	//先set一把
+					        	boolean setSucc = setDeviceInfo(log);
+					        	if(setSucc){
+					        		startApp();
+					        		
+					        		try {
+					        			Thread.sleep(DYDApp.DELAY*1000);//等待n秒
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+					        		
+					        		killApp();//结束app
+					        		//notifyToGetActiveInfo();
+					        		
+					        	}
+					        	
+					        	handler.postDelayed(runnable, 1000);
+					        }
+					        else//代理不可用，从网络获取ip
+					        {
+					        	proxy.stopProxy();
+					        	app.setText(ip+":"+port+getString(R.string.ip_cannot_use));
+					        	DYDApp.Log(ip+":"+port+getString(R.string.ip_cannot_use));
+					        	handler.postDelayed(getIpRunner, 500);
+					        }
+						} catch (Exception e) {
+							Loger.w(AdUtils.getErrorInfoFromException(e));
+						}
+					}
+				}).start();
+
+				
+			}
+			else{
+				notifyToGetActiveInfo(getOldDevice);
+				handler.postDelayed(this, 5*1000);
+			}
+		}
+	};
+	
+	//获取ip
+	Runnable getIpRunner=new Runnable(){
+		public void run() 
+		{
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					while(true)
+					{
+						try {
+							if(STOP_GET_IP){
+								handler.removeCallbacks(getIpRunner);
+								break;
+							}
+							
+							try {
+								Thread.sleep(1000);
+							} catch (Exception e) {
+							}
+							
+							//QuMiApp.Log("获取ip...");
+							app.setText(getString(R.string.getIP));
+							List<String> ipList = CheckIP.getIps(1);
+							DYDApp.Log(getString(R.string.getIP_Num)+ipList.size());
+							app.setText(getString(R.string.getIP_Num)+ipList.size());
+							
+							if(ipList == null || ipList.size() == 0)continue;
+							
+							IP ipvo = CheckIP.getIP(ipList.get(0));
+							if(ipvo == null)continue;
+					        String ip = ipvo.getIpAddr();  
+					        String port = ipvo.getPort();
+							
+					        String localIP = CheckIP.getLocalIP();
+					        DYDApp.Log(getString(R.string.local_ip)+localIP);
+					        app.setText(getString(R.string.local_ip)+localIP);
+					        
+					        if(localIP == null || "".equals(localIP))continue;
+					        
+					        proxy.startProxy(ip, port);
+					        boolean result = CheckIP.isAvailProxy(localIP,ip,port);
+							if(result){
+								app.setText(ip+":"+port+getString(R.string.ip_can_use));
+					        	DYDApp.Log(ip+":"+port+getString(R.string.ip_can_use));
+					        	
+					        	//先set一把
+					        	boolean setSucc = setDeviceInfo(log);
+					        	if(setSucc){
+					        		startApp();
+					        		
+					        		try {
+					        			Thread.sleep(DYDApp.DELAY*1000);//等待n秒
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+					        		
+					        		killApp();//结束app
+					        		//notifyToGetActiveInfo();
+					        	}
+					        	
+					        	handler.postDelayed(runnable, 1000);
+					        	break;
+							}else{
+								proxy.stopProxy();
+								app.setText(ip+":"+port+getString(R.string.ip_cannot_use));
+					        	DYDApp.Log(ip+":"+port+getString(R.string.ip_cannot_use));
+							}
+						} catch (Exception e) {
+							Loger.w(AdUtils.getErrorInfoFromException(e));
+						}
+	
+					}
+				}
+			}).start();
+		}
+	};
+	
+	//获取界面txtview文本
+	private String getTextViewText()
+	{
+		return MainActivity.instants.txtMsg.getText().toString();
+	}
+	
+	private void setText(String txt){
+		
+		String curText = getTextViewText();
+		String newText = curText + "\n" + txt;
+		
+		Intent in = new Intent("adrebot_msg");
+		in.putExtra("msg", newText);
+		sendBroadcast(in);
+		
+	}
+	
+	private void setSuccText(String txt){
+	
+		String newText = txt;
+		
+		Intent in = new Intent("succ_msg");
+		in.putExtra("succ", newText);
+		sendBroadcast(in);
+		
+	}
+	
+	private boolean setDeviceInfo(ActiveLog log) throws Exception
+	{
+		boolean result = false;
+		Device device = log.getDevice();
+		if(device == null){
+			DYDApp.Log(getString(R.string.device_null));
+			app.setText(getString(R.string.device_null));
+			return result;
+		}
+		
+		Mac= device.getMac();
+		DYDApp.Log(getString(R.string.device_imei)+device.getImei());
+		app.setText(getString(R.string.device_imei)+device.getImei());
+		
+		IMEI = device.getImei();
+		IMSI = device.getImsi();
+		
+		
+		phoneModel = device.getModel();
+		phoneManufacturer= device.getName();
+		androidReleaseVersion = device.getOsVersion();
+		UDID = MD5.hash(device.getMac()).toLowerCase();
+		
+		screenWidth = String.valueOf(device.getWidth());
+		screenHeight = String.valueOf(device.getHeight());
+		
+		setNetwork();
+		
+		androidSDKLevel =  String.valueOf(device.getApilevel());
+		line1Number = randomLine1Number();
+		setParams.set(
+				  IMEI, 
+				  IMSI,
+				  Mac,
+				  UDID,
+				  line1Number,
+				  screenWidth,
+				  screenHeight,
+				  networkType,
+				  networkOperation,
+				  phoneModel,
+				  phoneManufacturer,
+				  androidReleaseVersion,
+				  androidSDKLevel,
+				  screenLayoutSize);
+		
+		return true;
+	}
+	
+	//发消息，通知去服务器获取最新的激活信息
+	private void notifyToGetActiveInfo(boolean oldData)
+	{
+		if(oldData == false)
+		{
+			Intent in = new Intent(DYDApp.GET_DEVICE);
+			sendBroadcast(in);
+			if(toGetOlderDevice)
+				getOldDevice = true;
+		}
+		else{
+			Intent in = new Intent(DYDApp.GET_OLD_DEVICE);
+			sendBroadcast(in);
+			getOldDevice = false;
+		}
+	}
+	
+	//随机生成对应网络运营商真实手机号码
+	private String randomLine1Number(){
+		//如果是wifi我们随机生成所有号段的号码,目前一共26个号段
+		if(networkType.equalsIgnoreCase("wifi")){
+			
+			// 中国联通
+				//130 131 132 155 156 185 186
+			if(IMSI.startsWith("46001") || IMSI.startsWith("46006")){
+				int random = new Random().nextInt(7);
+				if(random == 0)	return getRandomPhoneNumber("+86130");
+				if(random == 1)	return getRandomPhoneNumber("+86131");
+				if(random == 2)	return getRandomPhoneNumber("+86132");
+				if(random == 3)	return getRandomPhoneNumber("+86155");
+				if(random == 4)	return getRandomPhoneNumber("+86156");
+				if(random == 5)	return getRandomPhoneNumber("+86185");
+				if(random == 6) return getRandomPhoneNumber("+86186");
+			}
+			//中国移动
+				//134 135 136 137 138 139 147 150 151 152 157 158 159 182 187 188
+			if(IMSI.startsWith("46000") || IMSI.startsWith("46002") || IMSI.startsWith("46007")){
+				int random = new Random().nextInt(16);
+				if(random == 0)	return getRandomPhoneNumber("+86134");
+				if(random == 1)	return getRandomPhoneNumber("+86135");
+				if(random == 2)	return getRandomPhoneNumber("+86136");
+				if(random == 3)	return getRandomPhoneNumber("+86137");
+				if(random == 4)	return getRandomPhoneNumber("+86138");
+				if(random == 5)	return getRandomPhoneNumber("+86139");
+				if(random == 6)	return getRandomPhoneNumber("+86147");
+				if(random == 7)	return getRandomPhoneNumber("+86150");
+				if(random == 8)	return getRandomPhoneNumber("+86151");
+				if(random == 9)	return getRandomPhoneNumber("+86152");
+				if(random == 10)return getRandomPhoneNumber("+86157");
+				if(random == 11)return getRandomPhoneNumber("+86158");
+				if(random == 12)return getRandomPhoneNumber("+86159");
+				if(random == 13)return getRandomPhoneNumber("+86182");
+				if(random == 14)return getRandomPhoneNumber("+86187");
+				if(random == 15)return getRandomPhoneNumber("+86188");				
+			}	
+			//中国电信
+				//153 180 189
+			if(IMSI.startsWith("46003") || IMSI.startsWith("46005")){
+				int random = new Random().nextInt(3);
+				if(random == 1)	return getRandomPhoneNumber("+86153");
+				if(random == 2)	return getRandomPhoneNumber("+86180");
+				if(random == 3)	return getRandomPhoneNumber("+86189");
+			}			
+		}
+		//如果不是wifi，生成的号码要跟运营商对应
+		else{
+			return randomLine1Number("Mobile");
+		}
+		return null;
+	}
+	
+	//随机生成对应网络运营商真实手机号码
+	private String randomLine1Number(String mobile){
+		//联通2g 
+			//130 131 132 155 156 185 
+		if(networkOperation.equals(Mobile.CHINA_UNICOM) 
+				&& ( networkType.equals(Mobile.ChinaUnicom.GPRS) || networkType.equals(Mobile.ChinaUnicom.EDGE) ) ){
+			int random = new Random().nextInt(6);
+			if(random == 0)	return getRandomPhoneNumber("+86130");
+			if(random == 1)	return getRandomPhoneNumber("+86131");
+			if(random == 2)	return getRandomPhoneNumber("+86132");
+			if(random == 3)	return getRandomPhoneNumber("+86155");
+			if(random == 4)	return getRandomPhoneNumber("+86156");
+			if(random == 5)	return getRandomPhoneNumber("+86185");
+		}
+		//联通3g 
+			//186
+		if(networkOperation.equals(Mobile.CHINA_UNICOM) 
+				&& ( networkType.equals(Mobile.ChinaUnicom.HSPA) 
+						|| networkType.equals(Mobile.ChinaUnicom.UMTS) 
+						|| networkType.equals(Mobile.ChinaUnicom.HSDPA) 
+						|| networkType.equals(Mobile.ChinaUnicom.HSPAP)) ){
+			return getRandomPhoneNumber("+86186");
+		}
+		
+		//坑爹移动
+			//134 135 136 137 138 139 147 150 151 152 157 158 159 182 187 188
+		if(networkOperation.equals(Mobile.CHINA_MOBILE) 
+				&& ( networkType.equals(Mobile.ChinaMobile.GPRS) || networkType.equals(Mobile.ChinaMobile.EDGE) ) ){
+			int random = new Random().nextInt(16);
+			if(random == 0)	return getRandomPhoneNumber("+86134");
+			if(random == 1)	return getRandomPhoneNumber("+86135");
+			if(random == 2)	return getRandomPhoneNumber("+86136");
+			if(random == 3)	return getRandomPhoneNumber("+86137");
+			if(random == 4)	return getRandomPhoneNumber("+86138");
+			if(random == 5)	return getRandomPhoneNumber("+86139");
+			if(random == 6)	return getRandomPhoneNumber("+86147");
+			if(random == 7)	return getRandomPhoneNumber("+86150");
+			if(random == 8)	return getRandomPhoneNumber("+86151");
+			if(random == 9)	return getRandomPhoneNumber("+86152");
+			if(random == 10)return getRandomPhoneNumber("+86157");
+			if(random == 11)return getRandomPhoneNumber("+86158");
+			if(random == 12)return getRandomPhoneNumber("+86159");
+			if(random == 13)return getRandomPhoneNumber("+86182");
+			if(random == 14)return getRandomPhoneNumber("+86187");
+			if(random == 15)return getRandomPhoneNumber("+86188");
+		}		
+		
+		//电信2g 
+			//153 180
+		if(networkOperation.equals(Mobile.CHINA_TELCOM) 
+				&& networkType.equals(Mobile.ChinaTelCom.CDMA) ){
+			int random = new Random().nextInt(2);
+			if(random == 1)	return getRandomPhoneNumber("+86153");
+			if(random == 2)	return getRandomPhoneNumber("+86180");
+		}		
+		//电信3g 
+			//189
+		if(networkOperation.equals(Mobile.CHINA_TELCOM) 
+				&& ( networkType.equals(Mobile.ChinaTelCom.EVDO_0) 
+						|| networkType.equals(Mobile.ChinaTelCom.EVDO_A) 
+						|| networkType.equals(Mobile.ChinaTelCom.EVDO_B) ) ){
+			return getRandomPhoneNumber("+86189");
+		}
+		
+		return null;
+	}
+	
+	//生成随机号码
+	private String getRandomPhoneNumber(String prefix){
+		String number = "";
+		number = prefix +
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10)
+			+ new Random().nextInt(10);
+		return number;
+	}
+	
+	
+   private void clearData(String pkg){
+	   Method methods[] = am.getClass().getMethods();
+	      for (int i = 0; i < methods.length; i++) 
+	      {
+	                if ("clearApplicationUserData".equals(methods[i].getName())){  
+	                    try {
+	                        methods[i].invoke(am, pkg, new ClearUserDataObserver());
+	                        app.setText("清理"+pkg+"缓存");
+	                        break;
+	                    } catch (Exception e) {
+	                     e.printStackTrace();
+	                    } 
+	                }
+	       }
+   }
+	
+	 class ClearUserDataObserver extends IPackageDataObserver.Stub {
+	       public void onRemoveCompleted(final String packageName, final boolean succeeded) {
+	           /*final Message msg = mHandler.obtainMessage(CLEAR_USER_DATA);
+	           msg.arg1 = succeeded?OP_SUCCESSFUL:OP_FAILED;
+	           mHandler.sendMessage(msg);*/
+	        }
+	    }
+}
