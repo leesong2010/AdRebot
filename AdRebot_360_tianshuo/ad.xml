@@ -3,6 +3,6 @@
 <item>
 	<adName>360mobile</adName>
 	<adPkg>com.qihoo360.mobilesafe</adPkg>
-	<delay>60</delay>
+	<delay>40</delay>
 </item>
 </items>

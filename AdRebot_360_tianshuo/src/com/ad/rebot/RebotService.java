@@ -11,6 +11,7 @@ import org.herojohn.adrobot.device.model.DeviceConfig;
 import org.herojohn.adrobot.device.model.HaomatongDevice;
 import org.herojohn.adrobot.device.util.MD5;
 
+import com.ad.utils.ShellCommand;
 import com.ad.utils.AdUtils;
 import com.ad.utils.CheckIP;
 import com.ad.utils.Loger;
@@ -204,20 +205,13 @@ public class RebotService extends Service{
 			Loger.w(AdUtils.getErrorInfoFromException(e));
 		}
 	}	
-	
-	//½áÊøapp
-	private void killApp()
-	{		
-		try {						 
-			Method method = Class.forName("android.app.ActivityManager").getMethod("forceStopPackage", String.class);  
-			method.invoke(mActivityManager, currAdPkg);
-			
-			appOpened = false;
-			//device.setIp(currIP);
-			haomatongDeviceCreator.updateInstalled(device);
-			Log.d("kill","_AFTER_KILL_killCount=" +killCount++);
+
+	private void startMonkey(){
+		try {
+			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
+			cmd.su.runWaitFor("monkey -p " + currAdPkg + " --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_360.txt 1");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Loger.w(AdUtils.getErrorInfoFromException(e));
 		}
 	}
 	
@@ -228,6 +222,7 @@ public class RebotService extends Service{
 		Intent intent = new Intent();
 		intent =pm.getLaunchIntentForPackage(currAdPkg); 		
 		startActivity(intent);
+		startMonkey();
 		appOpened = true;		
 				
 		try {
