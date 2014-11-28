@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\xiangxing.wu\\DYDAdrebot\\src\\android\\content\\pm\\IPackageStatsObserver.aidl
+ * Original file: C:\\Users\\xiangxing.wu\\Rebot\\AdRebot_with_monkey\\src\\android\\content\\pm\\IPackageStatsObserver.aidl
  */
 package android.content.pm;
 /**
