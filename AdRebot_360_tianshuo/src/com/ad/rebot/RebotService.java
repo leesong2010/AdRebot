@@ -100,7 +100,7 @@ public class RebotService extends Service{
 	private void initDB(){
 		try {
 			DeviceConfig config = new DeviceConfig();
-			config.setEndpoint("http://42.51.16.181:8089/adrobot-web");
+			config.setEndpoint("http://42.51.3.219:8089/adrobot-web");
 			config.setAdSense("haomatong");
 			config.setAppName("360");
 			config.setDevicesIndex(4);
@@ -336,7 +336,6 @@ public class RebotService extends Service{
 				} catch (Exception e) {}
 	    		
     			killApp();
-    			//kill360();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
     			//if(currentHour >=0 && currentHour <=7)
