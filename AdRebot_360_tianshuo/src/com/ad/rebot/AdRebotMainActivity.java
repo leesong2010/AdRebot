@@ -59,6 +59,7 @@ public class AdRebotMainActivity extends Activity implements OnGestureListener{
 	protected void onDestroy(){
 		super.onDestroy();
 		stopAdService();
+		unregisterReceiver(msgBrodcard);
 	}
 	
 	private void init(){

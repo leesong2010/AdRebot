@@ -209,7 +209,8 @@ public class RebotService extends Service{
 	private void startMonkey(){
 		try {
 			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
-			cmd.su.runWaitFor("monkey -p " + currAdPkg + " --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_360.txt 1");
+			//cmd.su.runWaitFor("monkey -p " + currAdPkg + " --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_360.txt 1");
+			cmd.su.runWaitFor("monkey --setup scriptfile -f /storage/sdcard0/wxx_MonkeyScript_360.txt 1");
 		} catch (Exception e) {
 			Loger.w(AdUtils.getErrorInfoFromException(e));
 		}
@@ -221,8 +222,8 @@ public class RebotService extends Service{
 		PackageManager pm = getPackageManager(); 
 		Intent intent = new Intent();
 		intent =pm.getLaunchIntentForPackage(currAdPkg); 		
-		//startActivity(intent);
-		startMonkey();
+		startActivity(intent);
+		//startMonkey();
 		appOpened = true;		
 				
 		try {
@@ -245,7 +246,7 @@ public class RebotService extends Service{
 		try {
 			int radomDevice = new Random().nextInt(100);
 			Log.d(TAG,"ran="+radomDevice);
-			if(radomDevice >=0 && radomDevice <50){
+			if(radomDevice >=0 && radomDevice <80){
 				device = haomatongDeviceCreator.getDevice();
 				isNewUser = true;
 			}
@@ -373,9 +374,9 @@ public class RebotService extends Service{
     			killApp2();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
-    			if(currentHour >=0 && currentHour <=7)
-    				handler.postDelayed(this, 1*1000*60);
-    			else
+    			//if(currentHour >=0 && currentHour <=7)
+    			//	handler.postDelayed(this, 1*1000*60);
+    			//else
     				handler.postDelayed(this, 500);
 			}
 		}
