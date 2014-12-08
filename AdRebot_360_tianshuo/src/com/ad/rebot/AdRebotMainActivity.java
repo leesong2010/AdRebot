@@ -4,9 +4,6 @@ import java.util.Random;
 
 import org.herojohn.adrobot.device.DeviceFactory;
 import org.herojohn.adrobot.device.creator.impl.HaomatongDeviceWebCreator;
-import org.herojohn.adrobot.device.model.DeviceConfig;
-import org.herojohn.adrobot.device.model.HaomatongDevice;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;

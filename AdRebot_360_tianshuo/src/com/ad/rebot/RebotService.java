@@ -41,8 +41,7 @@ public class RebotService extends Service{
 	private String currAdPkg = "com.sg.sledog";
 	//private String currAdPkg = "com.example.imei";
 	private AdItem currAd;
-	
-	
+		
 	private static final String TAG = "adrebot";
 	private boolean appOpened = false;
 	private static ServiceBrodcast brodcast;
@@ -78,6 +77,7 @@ public class RebotService extends Service{
 	private static int succ = 0;//新增成功数
 	private static int oldSucc = 0;//活跃用户成功数
 	private static boolean isNewUser = false;//如果true，代表是新用户激活
+	private Handler handler = new Handler();
 	
 	HaomatongDeviceWebCreator haomatongDeviceCreator = (HaomatongDeviceWebCreator) DeviceFactory.getInstance("haomatong_web");
 	ActivityManager mActivityManager; 
@@ -96,27 +96,12 @@ public class RebotService extends Service{
 		registerReceiver(brodcast, intentFilter);
 			
 		mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE); 
-		
-		File f = new File(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
-	//	am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);  
-		
-		if(!f.exists()) 
-		{
-			Log.d("HMT", "SDCard ip.txt can not found!!!");
-			stopSelf();
-		}
-		else
-		{
-			HMTContant.ipListAddress = AdUtils.readProperties(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
-		}
-		 
-		
+
 		initDB();		 
 	}
 
 	
-	private void initDB()
-	{
+	private void initDB(){
 		try {
 			DeviceConfig config = new DeviceConfig();
 			config.setEndpoint("http://42.51.3.219:8089/adrobot-web");
@@ -132,7 +117,6 @@ public class RebotService extends Service{
 	//初始化相关工具
 	private void init(){
 		setParams = new com.ad.utils.SetParams(getApplicationContext());
-		//proxy = new com.ad.utils.Proxy(getApplicationContext());
 	}
 		
 	public void onStart(Intent intent, int startId) {
@@ -153,13 +137,7 @@ public class RebotService extends Service{
 			e.printStackTrace();
 		}		
 	}
-	
-	Handler handler = new Handler() {  
-	    public void handleMessage(Message msg) {  	    	
-	        super.handleMessage(msg);  
-	    }  
-	};  
-	
+		 	
 	public void onDestroy() {
 		super.onDestroy();
 		
@@ -170,8 +148,7 @@ public class RebotService extends Service{
 		Log.d(TAG,"Service Destory");
 	}
 	
-	private class ServiceBrodcast extends BroadcastReceiver
-	{
+	private class ServiceBrodcast extends BroadcastReceiver{
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String act = intent.getAction();
@@ -183,24 +160,33 @@ public class RebotService extends Service{
 			}
 		}		
 	}
-
+	
+	private void kill360(){
+		setText("kill360");
+		try {
+			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
+			cmd.su.runWaitFor("busybox killall com.qihoo360.mobilesafe");
+			cmd.su.runWaitFor("busybox killall com.qihoo360.mobilesafe:GuardService");
+			cmd.su.runWaitFor("busybox killall /data/data/com.qihoo360.mobilesafe/fils/so_libs/um.0.2");
+			cmd.su.runWaitFor("busybox killall /data/data/com.qihoo360.mobilesafe/files/libmsa.so.4x.so");
+			cmd.su.runWaitFor("busybox killall /data/user/0/com.qihoo360.mobilesafe/files/so_libs/um.0.2");
+		} catch (Exception e) {
+			Loger.w(AdUtils.getErrorInfoFromException(e));
+		}
+	}
 	
 	//结束app
-	private void killApp2(){
-		try {
-			/*QuMiApp.Log("kill " + currAdPkg);
-			ShellCommand cmd = new ShellCommand();
-			//cmd.su.runWaitFor("kill -9 " + ShellCommand.getProcessPid(getApplicationContext(), currAdPkg));
-			cmd.su.runWaitFor("busybox killall -9 " + currAdPkg);*/
-			
+	private void killApp(){
+		setText("killApp");
+		try {			
 			Method forceStopPackage = mActivityManager.getClass().getDeclaredMethod("forceStopPackage", String.class);
 			forceStopPackage.setAccessible(true);
 			forceStopPackage.invoke(mActivityManager, currAdPkg);
-			//am.forceStopPackage(currAdPkg);  
+
 			appOpened = false;
 			haomatongDeviceCreator.updateInstalled(device);
-			Log.d("kill","_AFTER_KILL_killCount=" +killCount++);			
-			
+			Log.d("kill","_AFTER_KILL_killCount=" + killCount++);
+			setText("KillCount" + killCount);			
 		} catch (Exception e) {
 			Loger.w(AdUtils.getErrorInfoFromException(e));
 		}
@@ -216,33 +202,30 @@ public class RebotService extends Service{
 		}
 	}
 	
-	private void startApp()
-	{
+	private void startApp(){
 		setText("Start【" + currAd.getAdName() + "】");
+		setText("Start Pkg:" + currAdPkg);
+		
 		PackageManager pm = getPackageManager(); 
 		Intent intent = new Intent();
-		intent =pm.getLaunchIntentForPackage(currAdPkg); 		
-		startActivity(intent);
-		//startMonkey();
-		appOpened = true;		
-				
-		try {
-			
-		} catch (Exception e) {
-			Log.d(TAG,"save failed:");
+		intent =pm.getLaunchIntentForPackage(currAdPkg); 
+		if(intent == null) {
+			setText("Start Intent == null");
+			return;
 		}
+		startActivity(intent);
+		startMonkey();
+		appOpened = true;						
 				
 		if(isNewUser){
 			setSuccText("新增:"+ (++succ) + " 活跃:"+ (oldSucc));
 			//Loger.w("Imei="+device.getImei() +"-Succ="+succ  + ",活跃:"+ (oldSucc));
-		}
-		else{
+		}else{
 			setSuccText("新增:"+ (succ) + " 活跃:"+ (++oldSucc));
 		}	
 	}
 		
-	private void getDeviceInfo()
-	{
+	private void getDeviceInfo(){
 		try {
 			int radomDevice = new Random().nextInt(100);
 			Log.d(TAG,"ran="+radomDevice);
@@ -298,9 +281,9 @@ public class RebotService extends Service{
 	}
 		
 	//设置参数
-	public void setXXX()
-	{
+	public void setXXX(){
 		Log.d(TAG,"setXXX...");
+		setText("setXXX...");
 		String ip = "";
 		String port = "";
 		try {			
@@ -342,6 +325,7 @@ public class RebotService extends Service{
 			currAd = adList.get(new Random().nextInt(adList.size()));
 			currAdPkg = currAd.getAdPkg();
 			Log.d(TAG,"curAdPkg="+currAdPkg);
+			setText("curAdPkg="+currAdPkg);
 			
 			if(device == null || TextUtils.isEmpty(IMEI) || TextUtils.isEmpty(IMSI)){
 				new Thread(new Runnable() {				
@@ -349,12 +333,9 @@ public class RebotService extends Service{
 					public void run() {
 						setXXX();						
 					}
-				}).start();
-				
-				handler.removeCallbacks(this);
-			}
-			else
-			{
+				}).start();				
+				handler.removeCallbacks(runnable);
+			}else{
 				//第二次发送心跳广播
 				sendHeartBeatInfo();
 				
@@ -371,7 +352,8 @@ public class RebotService extends Service{
 					Thread.sleep(currAd.getDelay() * 1000);
 				} catch (Exception e) {}
 	    		
-    			killApp2();
+    			//killApp();
+    			kill360();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
     			//if(currentHour >=0 && currentHour <=7)
@@ -430,8 +412,7 @@ public class RebotService extends Service{
 		
 		Intent in = new Intent("succ_msg");
 		in.putExtra("succ", newText);
-		sendBroadcast(in);
-		
+		sendBroadcast(in);		
 	}
 	
 	//发送心跳信息
