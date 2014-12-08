@@ -3,86 +3,71 @@ count= 1
 speed= 1.0   
 start data >>   
 
-
+#########wait for start complete
 UserWait(3000)
 
-Tap(200,80,0)
 
-Tap(600,80,0)
-
-Tap(400,160,0)
-
-Tap(800,160,0)
-
+########find update
 UserWait(1000)
+Tap(666,1240,0)
 
-Tap(200,240,0)
-Tap(600,240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(666,96,0)
 
-Tap(400,320,0)
-Tap(800,320,0)
-UserWait(1000)
+UserWait(1500)
+Tap(656,313,0)
 
-Tap(200,400,0)
-Tap(600,400,0)
-UserWait(1000)
 
-Tap(400,480,0)
-Tap(800,480,0)
-UserWait(1000)
+########dismiss window
+UserWait(4500)
+Tap(100,150,0)
 
-Tap(200,560,0)
-Tap(600,560,0)
-UserWait(1000)
 
-Tap(400,640,0)
-Tap(800,640,0)
-UserWait(1000)
+#bottom buton
+UserWait(1500)
+Tap(100,1240,0)
 
-Tap(400,960,0)
-Tap(800,960,0)
-UserWait(1000)
+UserWait(1500)
+Tap(300,1240,0)
 
-Tap(200,1040,0)
-Tap(600,1040,0)
-UserWait(1000)
+UserWait(1500)
+Tap(500,1240,0)
 
-Tap(400,1120,0)
-Tap(800,1120,0)
-UserWait(1000)
+UserWait(1500)
+Tap(700,1240,0)
 
-Tap(200,1200,0)
-Tap(600,1200,0)
-UserWait(1000)
+UserWait(1500)
+Tap(100,1240,0)
 
-Tap(400,1280,0)
-Tap(800,1280,0)
-UserWait(1000)
 
-Tap(40,1250,0)
-Tap(80,1240,0)
-UserWait(1000)
+#bottom buton
+UserWait(1500)
+Tap(100,1240,0)
 
-Tap(160,1250,0)
-UserWait(1000)
+UserWait(1500)
+Tap(300,1240,0)
 
-Tap(240,1240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(500,1240,0)
 
-Tap(320,1240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(700,1240,0)
 
-Tap(400,1240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(100,1240,0)
 
-Tap(480,1240,0)
-UserWait(1000)
+#bottom buton
+UserWait(1500)
+Tap(100,1240,0)
 
-Tap(540,1240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(300,1240,0)
 
-Tap(600,1240,0)
-UserWait(1000)
+UserWait(1500)
+Tap(500,1240,0)
 
-Tap(640,1240,0)
+UserWait(1500)
+Tap(700,1240,0)
+
+UserWait(1500)
+Tap(100,1240,0)
