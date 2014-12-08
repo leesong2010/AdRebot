@@ -11,13 +11,10 @@ import org.herojohn.adrobot.device.model.DeviceConfig;
 import org.herojohn.adrobot.device.model.HaomatongDevice;
 import org.herojohn.adrobot.device.util.MD5;
 
-import com.ad.utils.ShellCommand;
 import com.ad.utils.AdUtils;
-import com.ad.utils.CheckIP;
 import com.ad.utils.Loger;
 import com.ad.utils.RandomUtils;
 import com.ad.vo.AdItem;
-import com.ad.vo.IP;
 import com.ad.vo.Mobile;
 
 import android.app.ActivityManager;
@@ -30,7 +27,6 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -161,19 +157,6 @@ public class RebotService extends Service{
 		}		
 	}
 	
-	private void kill360(){
-		setText("kill360");
-		try {
-			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
-			cmd.su.runWaitFor("busybox killall com.qihoo360.mobilesafe");
-			cmd.su.runWaitFor("busybox killall com.qihoo360.mobilesafe:GuardService");
-			cmd.su.runWaitFor("busybox killall /data/data/com.qihoo360.mobilesafe/fils/so_libs/um.0.2");
-			cmd.su.runWaitFor("busybox killall /data/data/com.qihoo360.mobilesafe/files/libmsa.so.4x.so");
-			cmd.su.runWaitFor("busybox killall /data/user/0/com.qihoo360.mobilesafe/files/so_libs/um.0.2");
-		} catch (Exception e) {
-			Loger.w(AdUtils.getErrorInfoFromException(e));
-		}
-	}
 	
 	//结束app
 	private void killApp(){
@@ -214,7 +197,7 @@ public class RebotService extends Service{
 			return;
 		}
 		startActivity(intent);
-		startMonkey();
+		//startMonkey();
 		appOpened = true;						
 				
 		if(isNewUser){
@@ -352,8 +335,8 @@ public class RebotService extends Service{
 					Thread.sleep(currAd.getDelay() * 1000);
 				} catch (Exception e) {}
 	    		
-    			//killApp();
-    			kill360();
+    			killApp();
+    			//kill360();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
     			//if(currentHour >=0 && currentHour <=7)
