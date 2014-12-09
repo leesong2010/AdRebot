@@ -212,7 +212,7 @@ public class RebotService extends Service{
 		try {
 			int radomDevice = new Random().nextInt(100);
 			Log.d(TAG,"ran="+radomDevice);
-			if(radomDevice >=0 && radomDevice <80){
+			if(radomDevice >=0 && radomDevice <60){
 				device = haomatongDeviceCreator.getDevice();
 				isNewUser = true;
 			}
@@ -338,9 +338,9 @@ public class RebotService extends Service{
     			killApp();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
-    			//if(currentHour >=0 && currentHour <=7)
-    			//	handler.postDelayed(this, 1*1000*60);
-    			//else
+    			if(currentHour >=0 && currentHour <=7)
+    				handler.postDelayed(this, 1*1000*10);
+    			else
     				handler.postDelayed(this, 500);
 			}
 		}
