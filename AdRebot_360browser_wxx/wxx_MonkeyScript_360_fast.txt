@@ -1,0 +1,23 @@
+type= wuxiangxing
+count= 1
+speed= 1.0   
+start data >>   
+
+#########wait for start complete
+UserWait(4000)
+
+
+########find update
+UserWait(1000)
+Tap(666,1240,0)
+
+UserWait(1000)
+Tap(666,96,0)
+
+UserWait(1000)
+Tap(656,313,0)
+
+
+########dismiss window
+UserWait(5500)
+Tap(100,150,0)

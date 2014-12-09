@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+<item>
+	<adName>360browser</adName>
+	<adPkg>com.qihoo.browser</adPkg>
+	<delay>20</delay>
+</item>
+</items>

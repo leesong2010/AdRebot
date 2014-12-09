@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/jiansheng">
+    	
+	 <ScrollView
+        android:id="@+id/sv_show"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        android:background="#00000000"
+        android:fadeScrollbars="false"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/ll_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/txtMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:textColor="#ff00FF00"
+                android:scrollbars="vertical"
+                android:textSize="14sp"/>
+        </LinearLayout>
+        
+    </ScrollView>
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="100dip"
+	    android:layout_alignParentBottom="true"
+	    android:orientation="horizontal">
+	   	<Button 
+	   	    android:id="@+id/btn_start" 
+	   	    android:layout_width="0dp"  
+	   	    android:layout_height="match_parent"
+	   	    android:layout_weight="1"
+	   	    android:visibility="invisible"
+	   	    android:textSize="40sp"
+	   	    android:textColor="#ff00ff00"
+	   	    android:text="@string/start"/>
+		<Button 
+		    android:id="@+id/btn_stop"
+		    android:layout_width="0dp"  
+	   	    android:layout_height="match_parent"
+	   	    android:layout_weight="1"
+			android:visibility="invisible"
+			android:textSize="40sp"
+			android:textColor="#ffff0000"
+		    android:text="@string/stop"/>        
+    </LinearLayout>     
+
+		
+	<TextView
+		android:id="@+id/txtSucc"
+		android:layout_width="match_parent"
+		android:layout_height="30dp"
+		android:background="#00000000"
+		android:textColor="#ffffff"
+		android:layout_alignParentTop="true"
+		android:scrollbars="vertical"
+		android:textSize="18sp"/>
+
+	<TextView
+		android:id="@+id/rights"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="right"
+		android:background="#000000"
+		android:textColor="#00FFFF"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:textStyle="bold"
+		android:visibility="invisible"
+		android:singleLine="false"
+		android:text="@string/rights"		
+		android:textSize="10sp"/>	
+			 	
+</RelativeLayout>

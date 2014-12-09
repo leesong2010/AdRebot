@@ -1,0 +1,31 @@
+type= wuxiangxing
+count= 1
+speed= 1.0   
+start data >>   
+
+#########wait for start complete
+UserWait(6000)
+
+#click one page
+UserWait(1500)
+Tap(100,809,0)
+
+#back to home jump to another page
+UserWait(3500)
+Tap(700,1240,0)
+UserWait(1500)
+Tap(700,1240,0)
+
+#click one page
+UserWait(1500)
+Tap(100,809,0)
+
+########find update
+UserWait(3500)
+Tap(400,1240,0)
+
+UserWait(1500)
+Tap(100,1062,0)
+
+UserWait(1500)
+Tap(400,760,0)
