@@ -12,9 +12,11 @@ import org.herojohn.adrobot.device.model.HaomatongDevice;
 import org.herojohn.adrobot.device.util.MD5;
 
 import com.ad.utils.AdUtils;
+import com.ad.utils.CheckIP;
 import com.ad.utils.Loger;
 import com.ad.utils.RandomUtils;
 import com.ad.vo.AdItem;
+import com.ad.vo.IP;
 import com.ad.vo.Mobile;
 
 import android.app.ActivityManager;
@@ -27,7 +29,7 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-import android.text.TextUtils;
+import android.os.Message;
 import android.util.Log;
 
 
@@ -37,11 +39,13 @@ public class RebotService extends Service{
 	private String currAdPkg = "com.sg.sledog";
 	//private String currAdPkg = "com.example.imei";
 	private AdItem currAd;
-		
+	
+	
 	private static final String TAG = "adrebot";
 	private boolean appOpened = false;
 	private static ServiceBrodcast brodcast;
 	
+	private static String currSettedIP = "";
 	
 	//参数设置工具类
 	private com.ad.utils.SetParams setParams;	
@@ -68,13 +72,13 @@ public class RebotService extends Service{
 	private int killCount;
 	private String currIP = "";
 	private String currPort = "";
-	private static boolean STOP_REBOT = false;
+	private static boolean STOP_GET_IP = false;
 	private List<AdItem> adList;
 	private static int succ = 0;//新增成功数
 	private static int oldSucc = 0;//活跃用户成功数
 	private static boolean isNewUser = false;//如果true，代表是新用户激活
-	private Handler handler = new Handler();
-	
+	//private static int retryNum = 0;
+	//private static boolean useLocalIP =false;
 	HaomatongDeviceWebCreator haomatongDeviceCreator = (HaomatongDeviceWebCreator) DeviceFactory.getInstance("haomatong_web");
 	ActivityManager mActivityManager; 
 	
@@ -91,8 +95,21 @@ public class RebotService extends Service{
 		intentFilter.addAction("stop_ad_service");
 		registerReceiver(brodcast, intentFilter);
 			
+		
+		File f = new File(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
 		mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE); 
-
+		
+		if(!f.exists()) 
+		{
+			Log.d("HMT", "SDCard ip.txt can not found!!!");
+			stopSelf();
+		}
+		else
+		{
+			HMTContant.ipListAddress = AdUtils.readProperties(Environment.getExternalStorageDirectory().getPath() + "/ip.txt");
+		}
+		 
+		
 		initDB();		 
 	}
 
@@ -113,12 +130,13 @@ public class RebotService extends Service{
 	//初始化相关工具
 	private void init(){
 		setParams = new com.ad.utils.SetParams(getApplicationContext());
+		proxy = new com.ad.utils.Proxy(getApplicationContext());
 	}
 		
 	public void onStart(Intent intent, int startId) {
 		Log.d(TAG,"Service onStart");
 		init();
-		STOP_REBOT = false;
+		STOP_GET_IP = false;
 		try {
 			//从sdcard的ad.xml来获取广告列表
 			adList = AdUtils.getAds(); 
@@ -133,25 +151,32 @@ public class RebotService extends Service{
 			e.printStackTrace();
 		}		
 	}
-		 	
+	
+	Handler handler = new Handler() {  
+	    public void handleMessage(Message msg) {  	    	
+	        super.handleMessage(msg);  
+	    }  
+	};  
+	
 	public void onDestroy() {
 		super.onDestroy();
 		
-		//proxy.stopProxy();
+		proxy.stopProxy();
 		handler.removeCallbacks(runnable);
-		STOP_REBOT = true;
+		STOP_GET_IP = true;
 		unregisterReceiver(brodcast);
 		Log.d(TAG,"Service Destory");
 	}
 	
-	private class ServiceBrodcast extends BroadcastReceiver{
+	private class ServiceBrodcast extends BroadcastReceiver
+	{
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String act = intent.getAction();
 			if("stop_ad_service".equals(act)){
 				File f = new File(Environment.getExternalStorageDirectory().getPath() + "/paramConfig");
 				if(f.exists())f.delete();
-				STOP_REBOT = true;
+				STOP_GET_IP = true;
 				stopSelf();
 			}
 		}		
@@ -161,6 +186,8 @@ public class RebotService extends Service{
 	//结束app
 	private void killApp(){
 		setText("killApp");
+		//if(!useLocalIP)
+			proxy.stopProxy();
 		try {			
 			Method forceStopPackage = mActivityManager.getClass().getDeclaredMethod("forceStopPackage", String.class);
 			forceStopPackage.setAccessible(true);
@@ -269,14 +296,72 @@ public class RebotService extends Service{
 		setText("setXXX...");
 		String ip = "";
 		String port = "";
-		try {			
+		try {
+			while(true)
+			{
+				if(STOP_GET_IP){
+					handler.removeCallbacks(runnable);
+					return;
+				}
+				
+				//第一次发送心跳广播
+				sendHeartBeatInfo();
+				
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e) {}
+				
+				Log.d(TAG,"获取ip...");
+				setText("获取ip..");
+				List<String> ipList = CheckIP.getIps(1);
+				Log.d(TAG,"获取ip数量:"+ipList.size());
+				setText("Get ip size:" + ipList.size());
+				if(ipList == null || ipList.size() == 0) continue;
+				
+				IP ipvo = CheckIP.getIP(ipList.get(0));
+				if(ipvo == null)continue;
+		        ip = ipvo.getIpAddr();  
+		        port = ipvo.getPort();
+				
+		        String localIP = CheckIP.getLocalIP();
+		        Log.d(TAG,"本机ip:"+localIP);
+		        setText("This ip:"+localIP);	        
+		        
+		        proxy.startProxy(ip, port);
+		        boolean result = CheckIP.isAvailProxy(localIP,ip,port);
+		        Log.d(TAG,"获取的ip可用?"+result);
+		        setText((ip +":" + port) + (result == true?"-ip Avaliable!":"#UnAvailable Proxy") );
+		        if(result == false){
+	        		proxy.stopProxy();
+//	        		retryNum++;
+//	        		if(retryNum>=4){
+//	        			setText("重试次数大于4次，用本机搞！");	    
+//	        			useLocalIP = true;
+//	        			retryNum = 0;
+//	        			break;
+//	        		}
+	        		continue;
+		        }
+		        else{
+	        		currIP = ip;
+	        		currPort = port;
+	        		break;
+		       }
+			}
+					
 			getDeviceInfo();
 			
 			try {
 				if(isNewUser)
 					haomatongDeviceCreator.saveInstalled(device);
-			} catch (Exception e) {}
-									
+			} catch (Exception e) {e.printStackTrace();}
+				        
+		//	if(!useLocalIP)
+		//	{
+				Log.d(TAG,"设置代理--ip="+ip+":" +port);
+				setText("Start Proxy--ip="+ip+":" +port);
+				proxy.startProxy(ip, port);
+	//		}
 			setParams.set(
 						  IMEI, 
 						  IMSI,
@@ -310,7 +395,7 @@ public class RebotService extends Service{
 			Log.d(TAG,"curAdPkg="+currAdPkg);
 			setText("curAdPkg="+currAdPkg);
 			
-			if(device == null || TextUtils.isEmpty(IMEI) || TextUtils.isEmpty(IMSI)){
+			if("".equals(currIP) && "".equals(currPort) ){
 				new Thread(new Runnable() {				
 					@Override
 					public void run() {
@@ -322,7 +407,7 @@ public class RebotService extends Service{
 				//第二次发送心跳广播
 				sendHeartBeatInfo();
 				
-				if(STOP_REBOT){
+				if(STOP_GET_IP){
 					handler.removeCallbacks(runnable);
 					return;
 				}
