@@ -1,1 +1,1 @@
-xiangxing.wu=http://ip.zdaye.com/?checktime=10%B7%D6%D6%D3%C4%DA&sleep=10%C3%EB%C4%DA&gb=4&api=818735917409267450829&daochu=1&ct=
+xiangxing.wu=http://www.56pu.com/api?orderId=563111908442318038&line=all&region=&regionEx=&beginWith=&ports=&vport=&speed=&anonymity=3&scheme=&duplicate=2&sarea=0&quantity=

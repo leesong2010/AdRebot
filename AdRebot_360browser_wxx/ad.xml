@@ -3,6 +3,6 @@
 <item>
 	<adName>360browser</adName>
 	<adPkg>com.qihoo.browser</adPkg>
-	<delay>35</delay>
+	<delay>10</delay>
 </item>
 </items>
