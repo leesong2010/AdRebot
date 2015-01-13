@@ -202,6 +202,42 @@ public class RebotService extends Service{
 		}
 	}	
 
+	
+	//===============================================干掉360所有daemon进程==============================================
+	private void killApp2(){
+		setText("killApp");
+		//if(!useLocalIP)
+			proxy.stopProxy();
+		try {			
+			kill360BrowserAllDaemons();
+
+			appOpened = false;
+			haomatongDeviceCreator.updateInstalled(device);
+			Log.d("kill","_AFTER_KILL_killCount=" + killCount++);
+			setText("KillCount" + killCount);			
+		} catch (Exception e) {
+			Loger.w(AdUtils.getErrorInfoFromException(e));
+		}
+	}		
+		
+	private void kill360BrowserAllDaemons(){
+		killUnDead(currAdPkg);
+		killUnDead("com.qihoo.daemon");
+		killUnDead("com.qihoo360.accounts");
+		killUnDead("com.qihoo.appstore");
+	}	
+	
+	private void killUnDead(String unDeadPkgName){
+		try {
+			Method forceStopPackage = mActivityManager.getClass().getDeclaredMethod("forceStopPackage", String.class);
+			forceStopPackage.setAccessible(true);
+			forceStopPackage.invoke(mActivityManager, unDeadPkgName);	
+		} catch (Exception e) {
+		}		
+	}	
+	//@end of===============================================干掉360所有daemon进程========================================
+	
+	
 	private void startMonkey(){
 		try {
 			com.ad.utils.ShellCommand cmd = new com.ad.utils.ShellCommand();
@@ -420,7 +456,7 @@ public class RebotService extends Service{
 					Thread.sleep(currAd.getDelay() * 1000);
 				} catch (Exception e) {}
 	    		
-    			killApp();
+    			killApp2();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
     			if(currentHour >=0 && currentHour <=7)
