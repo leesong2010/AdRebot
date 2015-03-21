@@ -1,1 +1,1 @@
-xiangxing.wu=http://www.56pu.com/api?orderId=563111908442318038&line=all&region=&regionEx=&beginWith=&ports=&vport=&speed=&anonymity=3&scheme=&duplicate=2&sarea=0&quantity=
+xiangxing.wu=http://www.1dvj.com/api?orderId=563111908442318038&line=all&region=&regionEx=&beginWith=&ports=&vport=&speed=&anonymity=3&scheme=&duplicate=3&sarea=&quantity=
