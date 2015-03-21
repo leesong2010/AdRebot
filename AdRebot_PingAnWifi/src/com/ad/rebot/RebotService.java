@@ -364,6 +364,8 @@ public class RebotService extends Service{
 		        setText("This ip:"+localIP);	        
 		        
 		        proxy.startProxy(ip, port);
+		        
+		        /**************暂时注释掉ip检测
 		        boolean result = CheckIP.isAvailProxy(localIP,ip,port);
 		        Log.d(TAG,"获取的ip可用?"+result);
 		        setText((ip +":" + port) + (result == true?"-ip Avaliable!":"#UnAvailable Proxy") );
@@ -383,6 +385,10 @@ public class RebotService extends Service{
 	        		currPort = port;
 	        		break;
 		       }
+		       */
+        		currIP = ip;
+        		currPort = port;
+        		break;
 			}
 					
 			getDeviceInfo();
@@ -451,14 +457,14 @@ public class RebotService extends Service{
 				startApp();			
 				currIP = "";
 				currPort = "";
-				device = null;
+				//device = null;
     			try {
 					Thread.sleep(currAd.getDelay() * 1000);
 				} catch (Exception e) {}
 	    		
     			//killApp2();
     			killApp();
-    			
+    			device = null;
     			int currentHour = AdUtils.getHour();//获取当前时间
     			if(currentHour >=0 && currentHour <=7)
     				handler.postDelayed(this, 1*1000*10);

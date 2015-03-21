@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\Sparta\\myProjects\\AdRebot\\AdRebot_360browser_wxx\\src\\android\\content\\pm\\IPackageDataObserver.aidl
+ * Original file: C:\\Users\\Sparta\\myProjects\\AdRebot\\AdRebot_PingAnWifi\\src\\android\\content\\pm\\IPackageDataObserver.aidl
  */
 package android.content.pm;
 /***
