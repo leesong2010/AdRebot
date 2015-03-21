@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="libs3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/libs/android-logging-log4j-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/libs/jackson-mapper-asl-1.9.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/libs/jackson-core-asl-1.9.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/libs/log4j-1.2.17.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

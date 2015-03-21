@@ -117,9 +117,9 @@ public class RebotService extends Service{
 	private void initDB(){
 		try {
 			DeviceConfig config = new DeviceConfig();
-			config.setEndpoint("http://42.51.3.219:8089/360browser");
+			config.setEndpoint("http://42.51.16.181:8089/weather");
 			config.setAdSense("haomatong");
-			config.setAppName("360browser");
+			config.setAppName("360");
 			config.setDevicesIndex(4);
 			haomatongDeviceCreator.init(config);
 		} catch (Exception e) {
@@ -260,7 +260,7 @@ public class RebotService extends Service{
 			return;
 		}
 		startActivity(intent);
-		startMonkey();
+		//startMonkey();
 		appOpened = true;						
 				
 		if(isNewUser){
@@ -456,7 +456,8 @@ public class RebotService extends Service{
 					Thread.sleep(currAd.getDelay() * 1000);
 				} catch (Exception e) {}
 	    		
-    			killApp2();
+    			//killApp2();
+    			killApp();
     			
     			int currentHour = AdUtils.getHour();//获取当前时间
     			if(currentHour >=0 && currentHour <=7)

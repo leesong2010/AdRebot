@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AdRebot.iml" filepath="$PROJECT_DIR$/AdRebot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_360_tianshuo/AdRebot_360_tianshuo.iml" filepath="$PROJECT_DIR$/AdRebot_360_tianshuo/AdRebot_360_tianshuo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_360browser_wxx/AdRebot_360browser_wxx.iml" filepath="$PROJECT_DIR$/AdRebot_360browser_wxx/AdRebot_360browser_wxx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_hmt_origin/AdRebot_hmt_origin.iml" filepath="$PROJECT_DIR$/AdRebot_hmt_origin/AdRebot_hmt_origin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_qumi/AdRebot_qumi.iml" filepath="$PROJECT_DIR$/AdRebot_qumi/AdRebot_qumi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_weather_lsc/AdRebot_weather_lsc.iml" filepath="$PROJECT_DIR$/AdRebot_weather_lsc/AdRebot_weather_lsc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_with_monkey/AdRebot_with_monkey.iml" filepath="$PROJECT_DIR$/AdRebot_with_monkey/AdRebot_with_monkey.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_yy_dabing/AdRebot_yy_dabing.iml" filepath="$PROJECT_DIR$/AdRebot_yy_dabing/AdRebot_yy_dabing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_qumi/client/client.iml" filepath="$PROJECT_DIR$/AdRebot_qumi/client/client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_midi_lsc/miidi/miidi.iml" filepath="$PROJECT_DIR$/AdRebot_midi_lsc/miidi/miidi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AdRebot_woqu_lsc/woqu_server/woqu_server.iml" filepath="$PROJECT_DIR$/AdRebot_woqu_lsc/woqu_server/woqu_server.iml" />
+    </modules>
+  </component>
+</project>
+

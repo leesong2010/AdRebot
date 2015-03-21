@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="libs6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_360browser_wxx/libs/jackson-mapper-asl-1.9.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360browser_wxx/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360browser_wxx/libs/jackson-core-asl-1.9.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

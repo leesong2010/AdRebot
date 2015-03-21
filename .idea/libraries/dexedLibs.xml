@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="dexedLibs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/android-support-v4-a527471a4d121c610b53103cf1814995.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-core-asl-1.9.8-7f2a22ba2834eeb8feb3b1cb0deb68a8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/android-support-v4-8ce41e5dcd5b561ccfa3bb91424b78dd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-core-asl-1.9.8-7eaeed75730029bc161f657a9cceaacd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-core-asl-1.9.8-c0e4bb5c981c95272573a5e348062b44.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-mapper-asl-1.9.8-cd4b2e3afc41c09a7021a1e5bea6866a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/android-support-v4-eb0bf73f88a17a22778be04f7330eb34.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-mapper-asl-1.9.8-e892b5e409381c65d91689e85ac81cde.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_360_tianshuo/bin/dexedLibs/jackson-mapper-asl-1.9.8-b11878807f73ccc158e6ab0d3341feeb.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

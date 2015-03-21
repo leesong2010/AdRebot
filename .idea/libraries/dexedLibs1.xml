@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="dexedLibs1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-mapper-asl-1.9.8-5512e45b9b4e4c14ccd29cce2e4dd62a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/android-support-v4-5e47ac47b7360ca9c940bccbd609fde8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-core-asl-1.9.8-8015b98659545f0fb2f13a716467e009.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/android-support-v4-2fe5c739f94859f20a9dc00b73387fff.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-mapper-asl-1.9.8-b7277c7cafff99d79a6955b02999d17a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-core-asl-1.9.8-1a774f6cba20fa742ba2e88b1bb3861f.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/android-support-v4-ecd423e592bc4b8c0e0db41946f65124.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-core-asl-1.9.8-d4e82beb3dd74c91c60a2dd273fba593.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_weather_lsc/bin/dexedLibs/jackson-mapper-asl-1.9.8-e10546f3714ef16e612a0beb3c5d8869.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

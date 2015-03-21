@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="dexedLibs3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_yy_dabing/bin/dexedLibs/android-support-v4-0251b62ad6b0a5224860b26ff7bf79dd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_yy_dabing/bin/dexedLibs/jackson-core-asl-1.9.8-4b93cfd28355f4131a1f40884cffc6b7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_yy_dabing/bin/dexedLibs/jackson-mapper-asl-1.9.8-286a4e024a0250d0f4dbfc833f7477d3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

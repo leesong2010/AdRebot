@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="dexedLibs2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-core-asl-1.9.8-7b5314557dd8b5ae5043e68926da7abd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-mapper-asl-1.9.8-5c57337c8b6844f39a96148b5685dbc7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-mapper-asl-1.9.8-32b791f62369e545fb86faab2bd13910.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-support-v4-f6037f51808e578abe78804be619e98a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-logging-log4j-1.0.3-a0eb475cbacfe6c26f7ce074c0d74f90.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-support-v4-666a443f67509eade66c82860e517867.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-logging-log4j-1.0.3-bd42a63cf2e95a81ebd972f0accc8b0f.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-support-v4-b7340fba1e11c2d888a8a3c025d401d7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-logging-log4j-1.0.3-3ed97155b047c2e2c4c5471566a24be6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-mapper-asl-1.9.8-ee58c7b14f77273de3d6d4c224c77579.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-logging-log4j-1.0.3-3837553c52f199c881cb0545165abb34.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/log4j-1.2.17-fb2789f33ffadeacdf2f8c58fc00981a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/log4j-1.2.17-0b7cbb3eb75658b3ba91b1a2c081a0f4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-core-asl-1.9.8-44079f32ad4ba764a9830d0e3a1b1129.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/android-support-v4-54016d5ddf363ac91f706cc9f40a61df.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-core-asl-1.9.8-8d4011e65d75dbf6fda39186a7172514.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-mapper-asl-1.9.8-9ed49b6b80c621f93ed847146f9207fb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/log4j-1.2.17-53d4f6fa6c7dd51fc7d5d5835c6c167e.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/log4j-1.2.17-34a2dcc67a410651f0de8a1d93d9ab16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AdRebot_qumi/client/bin/dexedLibs/jackson-core-asl-1.9.8-859814007ece4fe6cbbd64e347e8b05b.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
