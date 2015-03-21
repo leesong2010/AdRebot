@@ -275,7 +275,7 @@ public class RebotService extends Service{
 		try {
 			int radomDevice = new Random().nextInt(100);
 			Log.d(TAG,"ran="+radomDevice);
-			if(radomDevice >=0 && radomDevice <60){
+			if(radomDevice >=0 && radomDevice <80){
 				device = haomatongDeviceCreator.getDevice();
 				isNewUser = true;
 			}
